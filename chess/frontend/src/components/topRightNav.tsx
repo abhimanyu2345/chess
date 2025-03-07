@@ -36,7 +36,7 @@ const TopRightNav: React.FC = () => {
                 {/* Logo */}
                 <div
                     className="text-lg font-bold text-gradient cursor-pointer"
-                    onClick={() => navigate("/home")}
+                    onClick={() => navigate("/")}
                     style={{
                         backgroundImage: "linear-gradient(to right, #4f46e5, #ec4899)",
                         WebkitBackgroundClip: "text",
