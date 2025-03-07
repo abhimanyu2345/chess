@@ -27,10 +27,11 @@ function Login(username, password, res) {
                     const token = (0, token_generation_1.default)({ Id: response.rows[0].user_id,
                         username: response.rows[0].username,
                         email: response.rows[0].email, });
+                    const isProduction = process.env.NODE_ENV === "production";
                     res.cookie("authToken", token, {
                         httpOnly: true, // Cookie cannot be accessed via JavaScript
-                        secure: false, // Use false in dev for non-HTTPS environments
-                        sameSite: "lax", // Allows cross-origin cookies
+                        secure: isProduction, // Use `true` in production (HTTPS required), `false` in dev
+                        sameSite: isProduction ? "none" : "lax", // Allow cross-origin in production
                         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
                     });
                     return res.status(200).send("Validation successful");

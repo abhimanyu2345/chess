@@ -35,10 +35,11 @@ const insertData = (username, password, email, res) => __awaiter(void 0, void 0,
             username: result.rows[0].username,
             email: result.rows[0].email, });
         console.log("User inserted successfully:");
+        const isProduction = process.env.NODE_ENV === "production";
         res.cookie("authToken", token, {
             httpOnly: true, // Cookie cannot be accessed via JavaScript
-            secure: false, // Use false in dev for non-HTTPS environments
-            sameSite: "lax", // Allows cross-origin cookies
+            secure: isProduction, // Use `true` in production (HTTPS required), `false` in dev
+            sameSite: isProduction ? "none" : "lax", // Allow cross-origin in production
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         });
         return res.status(200).json("Signup successful");
