@@ -12,29 +12,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.db_Connect = exports.pool = void 0;
 const dotenv_1 = require("dotenv");
 const { Pool } = require('pg');
-// Load environment variables from .env file
-(0, dotenv_1.config)();
-// Set up the connection configuration using environment variables
+(0, dotenv_1.config)(); // Load .env variables
+// Create a new database pool
 exports.pool = new Pool({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: Number(process.env.PG_PORT),
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }, // Required for Supabase
 });
-// Test the connection when the app starts
+// Function to test the database connection
 const db_Connect = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const client = yield exports.pool.connect();
-        const res = yield client.query('SELECT NOW()');
-        console.log('Connected to PostgreSQL:', res.rows[0]);
+        const res = yield client.query("SELECT NOW()");
+        console.log("✅ Connected to Supabase:", res.rows[0]);
         client.release(); // Release the client back to the pool
     }
     catch (err) {
-        console.error('Error connecting to PostgreSQL:', err.stack);
+        console.error("❌ Error connecting to Supabase:", err.message);
     }
 });
 exports.db_Connect = db_Connect;
-// Call dbconnect once to check the connection, but still export the pool
+// Test connection when the app starts
+(0, exports.db_Connect)();
+// Export the pool for queries
 exports.default = exports.pool;
-// Export the pool to use in other files

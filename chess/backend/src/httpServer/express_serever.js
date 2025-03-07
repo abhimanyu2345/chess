@@ -22,8 +22,13 @@ const fetchGames_1 = __importDefault(require("./express_server_components/fetchG
 const cors = require('cors');
 const express = require('express');
 exports.app = express();
+const allowedOrigins = [
+    'http://192.168.1.9:5173', // Vite frontend
+    'http://localhost:5173', // Localhost frontend
+    'http://192.168.20.3:5173', // Another possible device
+];
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: 'GET,POST',
     allowedHeaders: 'Content-Type,Authorization',
     credentials: true
@@ -41,6 +46,7 @@ exports.app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, funct
     return yield (0, ExpressLogin_1.default)(username, password, res);
 }));
 exports.app.post('/verify-token', (req, res) => {
+    console.log(req.cookies.authToken);
     const token = req.cookies.authToken;
     if (token) {
         const response = (0, tokenAuth_1.default)(token);
@@ -63,7 +69,7 @@ exports.app.get('/api/games', (req, res) => {
     return res.status(401).send('token not found');
 });
 function startExpress() {
-    exports.app.listen(5000, () => {
+    exports.app.listen(5000, '0.0.0.0', () => {
         console.log('Server is listening on http://localhost:5000');
     });
 }

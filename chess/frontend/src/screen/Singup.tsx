@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { host } from '../constants/Constants';
 
 const Signup: React.FC = () => {
   
@@ -31,7 +32,7 @@ const Signup: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/signup', { username, password, email }, { withCredentials: true });
+      const response = await axios.post(`http://${host}:5000/signup`, { username, password, email }, { withCredentials: true });
       alert(response.data);
       if (response.data) {
         

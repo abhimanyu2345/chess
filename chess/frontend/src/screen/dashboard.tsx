@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { ChessGame } from "../constants/types";
 import TopRightNav from "../components/topRightNav";
+import { host } from "../constants/Constants";
 
 const Dashboard: React.FC = () => {
   const playerId=localStorage.getItem("playerId");
@@ -11,9 +12,10 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/games', {
+        const response = await axios.get(`http://${host}:5000/api/games`, {
           withCredentials: true
         });
+        alert(response.data);
 
         if (response.status === 200) {
           setGames(response.data.games);
@@ -69,7 +71,7 @@ const Dashboard: React.FC = () => {
                     <div className="font-semibold text-lg text-white">
                       Game ID: {game.game_id}
                     </div>
-                    <div  className="text-sm text-gray-300">{(game.result==='draw')?'draw':(game.winner_id==playerId)?
+                    <div  className="text-sm text-gray-300">{(game.result==='draw')?'draw':(game.result==='player_exit')?'Player Exited':(game.winner_id==playerId)?
                     'win':'loss'}</div>
                     
                   </div>

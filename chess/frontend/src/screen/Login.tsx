@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { host } from '../constants/Constants';
 
 const ChessLogin: React.FC = () => {
   const [formData, setFormData] = useState<{
@@ -22,8 +23,8 @@ const ChessLogin: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/login', { username, password }, {withCredentials: true});
-
+      const response = await axios.post(`http://${host}:5000/login`, { username, password }, {withCredentials: true});
+      
       alert('Login successful!'); // Handle success (e.g., redirect)
       nav('/home');
     } catch (err: any) {

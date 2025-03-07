@@ -14,10 +14,14 @@ export const app = express();
 
 
 
-
+const allowedOrigins = [
+  'http://192.168.1.9:5173', // Vite frontend
+  'http://localhost:5173',    // Localhost frontend
+  'http://192.168.20.3:5173', // Another possible device
+];
 
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins,
   methods: 'GET,POST',
   allowedHeaders: 'Content-Type,Authorization',
   credentials: true
@@ -51,7 +55,7 @@ app.post('/login', async(req:Request, res:Response)=>{
 
 });
 app.post('/verify-token', (req:Request, res:Response)=>{
-  
+  console.log(req.cookies.authToken);
   const token  = req.cookies.authToken;
   if(token){
   const response =tokenAuth(token);
@@ -82,7 +86,7 @@ app.get('/api/games', (req:Request, res:Response)=>{
 
 
 export default function  startExpress(){
-  app.listen(5000, () => {
+  app.listen(5000,'0.0.0.0' ,() => {
     console.log('Server is listening on http://localhost:5000');
   })};
 

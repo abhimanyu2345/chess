@@ -29,8 +29,8 @@ function Login(username, password, res) {
                         email: response.rows[0].email, });
                     res.cookie("authToken", token, {
                         httpOnly: true, // Cookie cannot be accessed via JavaScript
-                        secure: true, // Use false in dev for non-HTTPS environments
-                        sameSite: "None", // Allows cross-origin cookies
+                        secure: false, // Use false in dev for non-HTTPS environments
+                        sameSite: "lax", // Allows cross-origin cookies
                         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
                     });
                     return res.status(200).send("Validation successful");

@@ -1,6 +1,6 @@
 import { Response } from "express";
 import pool from "../../DB/db";
-import tokenAuth from "../../token_components/tokenAuth";
+
 import generateToken from "../../token_components/token_generation";
 
 const bcrypt = require('bcrypt');
@@ -23,8 +23,8 @@ export default async function Login(username: string, password: string, res: Res
         
         res.cookie("authToken", token, {
           httpOnly: true,  // Cookie cannot be accessed via JavaScript
-          secure:true, // Use false in dev for non-HTTPS environments
-          sameSite: "None", // Allows cross-origin cookies
+          secure:false, // Use false in dev for non-HTTPS environments
+          sameSite: "lax", // Allows cross-origin cookies
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         });
         

@@ -37,8 +37,8 @@ const insertData = (username, password, email, res) => __awaiter(void 0, void 0,
         console.log("User inserted successfully:");
         res.cookie("authToken", token, {
             httpOnly: true, // Cookie cannot be accessed via JavaScript
-            secure: true, // Use false in dev for non-HTTPS environments
-            sameSite: "None", // Allows cross-origin cookies
+            secure: false, // Use false in dev for non-HTTPS environments
+            sameSite: "lax", // Allows cross-origin cookies
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         });
         return res.status(200).json("Signup successful");

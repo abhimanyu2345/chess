@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { authResult, User } from "../constants/types";
+import { host } from "../constants/Constants";
 
 const useAuth = (): authResult => {
   const [authStatus, setAuthStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
@@ -12,7 +13,7 @@ const useAuth = (): authResult => {
       try {
         // Send request to backend to verify token
         const response = await axios.post(
-          'http://localhost:5000/verify-token',
+          `http://${host}:5000/verify-token`,
           {},
           { withCredentials: true }  // Ensure cookies are sent with the request
         );
