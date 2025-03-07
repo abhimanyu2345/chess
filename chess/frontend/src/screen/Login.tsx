@@ -25,8 +25,10 @@ const ChessLogin: React.FC = () => {
     try {
       const response = await axios.post(`http://${host}:5000/login`, { username, password }, {withCredentials: true});
       
-      alert('Login successful!'); // Handle success (e.g., redirect)
+      ('Login successful!'); // Handle success (e.g., redirect)
       nav('/home');
+      console.log(response);
+
     } catch (err: any) {
       setError(err.response.data || 'Login failed. Please try again.');
     }

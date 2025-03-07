@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { pieces } from './../assets/pieces.ts';
 import { ChessBoardProps } from "../constants/Constants.ts";
 import { Square } from "chess.js";
-import Chat from "./chat.tsx";
 
 export default function ChessBoard({ ChessBoard, player_color, MessageMove, board, SetBoard, capturedWhite, capturedBlack, handleMove }: ChessBoardProps) {
     const [from, SetFrom] = useState<Square | null>(null);

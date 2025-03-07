@@ -1,14 +1,14 @@
 import { Chess, Color, PieceSymbol, Square } from "chess.js";
 import useSocket from "../hooks/CustomHooks";
 import { useEffect, useState } from "react";
-import { ABANDONED, CHAT, COLOR, INIT, MOVE } from "../constants/Constants";
+import { ABANDONED,COLOR, INIT, MOVE } from "../constants/Constants";
 import ChessBoard from "../components/board";
 import TopRightNav from "../components/topRightNav";
 import Chat from "../components/chat";  // Ensure the Chat component is correctly imported
 
 export default function Game() {
     const socket = useSocket();
-    const [game, setGame] = useState<Chess>(new Chess());
+    const game:Chess =new Chess();
     const [requestStatus, setRequestStatus] = useState(false);
     const [capturedWhite, setCapturedWhite] = useState<string[]>([]);
     const [capturedBlack, setCapturedBlack] = useState<string[]>([]);

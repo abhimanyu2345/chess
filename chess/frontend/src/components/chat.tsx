@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { CHAT } from '../constants/Constants';
-
+import React, {  useState } from 'react';
 interface ChatProps {
   socket: WebSocket | null;
   messages: string[];

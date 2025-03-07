@@ -1,7 +1,6 @@
 import React from 'react';
 import './../index.css';
 import JoinButton from '../components/joinbutton';
-import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import TopRightNav from '../components/topRightNav';
 

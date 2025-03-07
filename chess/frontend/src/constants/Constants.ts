@@ -1,5 +1,5 @@
 import { Chess, Color, PieceSymbol, Square } from "chess.js";
-export const host ='13.228.225.19';
+export const host ='localhost';
 export const INIT ="init_game";
 export const MOVE='move';
 export const COLOR='color';
@@ -14,7 +14,7 @@ export interface move{
 export type PlayerColor = 'b' | 'w';
 export interface ChessBoardProps {
     ChessBoard: Chess;
-    player_color: PlayerColor;
+    player_color: "w" | "b"|undefined;
     MessageMove: Function
     capturedWhite:string[]
     capturedBlack:string[]
