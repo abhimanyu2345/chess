@@ -14,7 +14,7 @@ export default function ChessBoard({ ChessBoard, player_color, MessageMove, boar
     }, [ChessBoard, player_color]);
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        alert(clickState)
+        
         if (!(e.target instanceof HTMLElement)) return;
 
         const clickedSquare = e.currentTarget.id as Square;
@@ -39,6 +39,7 @@ export default function ChessBoard({ ChessBoard, player_color, MessageMove, boar
         if (ChessBoard.isGameOver()) {
             alert("Game Over");
         }
+        alert(clickState)
     };
 
     return (
