@@ -1,6 +1,6 @@
 import { Chess, Color, PieceSymbol, Square } from "chess.js";
 
-export const host =import.meta.env.BACKEND-_URL;
+export const host =import.meta.env.BACKEND_URL;
 export const INIT ="init_game";
 export const MOVE='move';
 export const COLOR='color';
