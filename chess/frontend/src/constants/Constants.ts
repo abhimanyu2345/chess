@@ -1,5 +1,6 @@
 import { Chess, Color, PieceSymbol, Square } from "chess.js";
-export const host ='54.254.162.138';
+
+export const host =import.meta.env.VITE_API_BASE_URL;
 export const INIT ="init_game";
 export const MOVE='move';
 export const COLOR='color';
