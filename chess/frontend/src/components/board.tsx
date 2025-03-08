@@ -11,7 +11,7 @@ export default function ChessBoard({ ChessBoard, player_color, MessageMove, boar
     useEffect(() => {
         SetClickState(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none');
         
-    }, [ChessBoard.turn(), player_color]);
+    }, [ChessBoard, player_color]);
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
         alert(clickState)
