@@ -23,6 +23,7 @@ export default function ChessBoard({
   }, [ChessBoard, player_color]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    console.log(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none')
     if (!(e.target instanceof HTMLElement)) return;
 
     const clickedSquare = e.currentTarget.id as Square;
@@ -41,6 +42,7 @@ export default function ChessBoard({
           console.log(ChessBoard.turn());
           console.log(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none')
           SetClickState(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none');
+          console.log("state afte set"+clickState)
         }
       } catch (err) {
         console.error("Invalid move", err);
