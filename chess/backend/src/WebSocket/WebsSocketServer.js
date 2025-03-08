@@ -5,6 +5,7 @@ const Game_Manger_1 = require("../Game_Manger");
 const wss = new ws_1.WebSocketServer({ port: 8080, host: '0.0.0.0' });
 const member = new Game_Manger_1.Game_Manager();
 const startWebSocket = () => {
+    console.log('wbss started');
     wss.on('connection', (ws) => {
         console.log('connection');
         member.addUser(ws);
