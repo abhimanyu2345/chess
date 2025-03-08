@@ -14,7 +14,7 @@ export const app = express();
 // ✅ CORS Configuration
 const allowedOrigins = [
   "https://chess-abhimanyu2345s-projects.vercel.app", 
-  "http://localhost"
+  
 ];
 
 const corsOptions = {
