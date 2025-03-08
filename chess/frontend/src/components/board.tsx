@@ -36,6 +36,9 @@ export default function ChessBoard({
           MessageMove({ from: from, to: clickedSquare });
           handleMove(moveResult);
           // Immediately update clickable status after a move.
+          console.log(moveResult);
+          console.log(player_color +"palyer colro");
+          console.log(ChessBoard.turn());
           SetClickState(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none');
         }
       } catch (err) {
