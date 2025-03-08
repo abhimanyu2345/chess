@@ -1,137 +1,196 @@
+import { Chess, Color, PieceSymbol, Square } from "chess.js";
+import useSocket from "../hooks/CustomHooks";
 import { useEffect, useState } from "react";
-import { pieces } from "./../assets/pieces.ts";
-import { ChessBoardProps } from "../constants/Constants.ts";
-import { Square } from "chess.js";
+import { ABANDONED,COLOR, INIT, MOVE } from "../constants/Constants";
+import ChessBoard from "../components/board";
+import TopRightNav from "../components/topRightNav";
+import Chat from "../components/chat";  // Ensure the Chat component is correctly imported
 
-export default function ChessBoard({
-  ChessBoard,
-  player_color,
-  MessageMove,
-  board,
-  SetBoard,
-  capturedWhite,
-  capturedBlack,
-  handleMove,
-}: ChessBoardProps) {
-  const [from, SetFrom] = useState<Square | null>(null);
-  const Notify = new Audio("./notify.mp3");
+export default function Game() {
+    const socket = useSocket();
+    const game:Chess =new Chess();
+    const [requestStatus, setRequestStatus] = useState(false);
+    const [capturedWhite, setCapturedWhite] = useState<string[]>([]);
+    const [capturedBlack, setCapturedBlack] = useState<string[]>([]);
+    const [connection, setConnection] = useState(false);
+    const [playerColor, setPlayerColor] = useState<'w' | 'b'>();
+    const [board, setBoard] = useState<({ square: Square; type: PieceSymbol; color: Color } | null)[][]>(game.board());
 
-  // Optional logging to help debug the turn.
-  useEffect(() => {
-    console.log("Engine turn:", ChessBoard.turn(), "Player color:", player_color);
-  }, [board, player_color, ChessBoard]);
+    const captureSound = new Audio('./capture.mp3');
+    const moveSound = new Audio('./move-self.mp3');
+    const playerId = localStorage.getItem('playerId');
+    const token = localStorage.getItem('token');
+    const [messages, setMessages] = useState<string[]>([]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!(e.target instanceof HTMLElement)) return;
-    
-    // Directly check the engine's turn (always up-to-date)
-    if (ChessBoard.turn() !== player_color) {
-      alert("It's not your turn!");
-      return;
-    }
-
-    const clickedSquare = e.currentTarget.id as Square;
-    if (from === null) {
-      SetFrom(clickedSquare);
-    } else {
-      try {
-        const moveResult = ChessBoard.move({ from, to: clickedSquare });
-        if (moveResult) {
-          // Force a new board reference to trigger a re-render.
-          SetBoard(JSON.parse(JSON.stringify(ChessBoard.board())));
-          MessageMove({ from: from, to: clickedSquare });
-          handleMove(moveResult);
-          console.log("Move made. New turn is:", ChessBoard.turn());
+    const handleMove = (moveResult: any) => {
+        if (moveResult.captured) {
+            captureSound.play();
+            const capturedPieceColor = game.turn() === 'w' ? 'b' : 'w';
+            if (capturedPieceColor === 'w') {
+                setCapturedWhite((prev) => [...prev, moveResult.captured]);
+            } else {
+                setCapturedBlack((prev) => [...prev, moveResult.captured]);
+            }
+        } else {
+            moveSound.play();
         }
-      } catch (err) {
-        console.error("Invalid move", err);
-        Notify.play();
-      }
-      SetFrom(null);
+    };
+
+    const handleSocketMessage = (data: MessageEvent) => {
+        let message;
+        try {
+            message = JSON.parse(data.data);
+        } catch (e) {
+            console.error("Error parsing message", e);
+            return;
+        }
+
+        switch (message.type) {
+            case COLOR:
+                if (message.message === "w" || message.message === "b") {
+                    setConnection(true);
+                    setPlayerColor(message.message);
+                    alert(`You are playing as ${message.message}`);
+                }
+                break;
+
+            case MOVE:
+                const moveResult = game.move(message.move);
+                setBoard(game.board());
+                handleMove(moveResult);
+                console.log(game.turn())
+                break;
+
+            case ABANDONED:
+                alert('Other player left the game.');
+                setConnection(false);
+                setRequestStatus(false);
+                break;
+            case 'chat':
+
+                console.log(message.ChatContent);
+                setMessages((prevMessages) => [
+                    ...prevMessages,`
+                    ${message.playerId} : ${message.ChatContent}`,
+                ]);
+                
+                
+                break;
+
+            default:
+                console.warn("Unknown message type", message);
+                
+        }
+    };
+
+    useEffect(() => {
+        if (socket) {
+            socket.onmessage = handleSocketMessage;
+        }
+    }, [socket]);
+
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+        };
+
+        const handleUnload = () => {
+            try {
+                socket?.close(1000, 'player_exit');
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        if (connection) {
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('unload', handleUnload);
+        }
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handleUnload);
+        };
+    }, [connection, socket]);
+
+    const sendMoveMessage = (move: any) => {
+        if (!socket) {
+            console.error("Socket connection is not available.");
+            return;
+        }
+
+        try {
+            const message = JSON.stringify({
+                type: MOVE,
+                playerId,
+                move,
+            });
+            socket.send(message);
+        } catch (error) {
+            console.error("Error sending move message", error);
+        }
+    };
+
+    if (!socket) {
+        return <>Connecting...</>;
     }
 
-    if (ChessBoard.isGameOver()) {
-      alert("Game Over");
-    }
-  };
-
-  return (
-    <div className="flex pl-3 z-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl rounded-l-none">
-      {/* Chessboard */}
-      <div
-        className={`z-10 bg-opacity-0 w-[50%] min-w-[12cm] flex flex-wrap ${
-          player_color === "b" ? "rotate-180" : ""
-        }`}
-      >
-        {board.map((row, i) => (
-          <div key={i} className={`flex w-full ${player_color === "b" ? "rotate-180" : ""}`}>
-            {row.map((element, j) => {
-              const squareId = String.fromCharCode(97 + j) + String(8 - i);
-              const isSelected = squareId === from;
-              return (
-                <div
-                  key={squareId}
-                  onClick={handleClick}
-                  id={squareId}
-                  className={`w-[calc(100%/8)] aspect-square opacity-90
-                    ${(i + j) % 2 === 0 ? "bg-white" : "bg-gray-500"}
-                    ${
-                      isSelected
-                        ? "border-2 border-blue-500 bg-red-500 rounded-md shadow-[0_0_15px_rgba(59,130,246,0.75)] animate-pulse text-white"
-                        : ""
-                    }
-                  `}
-                >
-                  {element !== null && (
-                    <div className="text-6xl hover:text-7xl text-center py-1 hover:shadow-green-500 hover:shadow-2xl">
-                      {pieces[element.color + element.type]}
-                    </div>
-                  )}
+    if (connection) {
+        return (
+            <div className="game-container flex ">
+                <div className="chess-board-container min-w-fit pb-3 flex-1">
+                    <ChessBoard
+                        ChessBoard={game}
+                        player_color={playerColor}
+                        board={board}
+                        SetBoard={setBoard}
+                        MessageMove={sendMoveMessage}
+                        capturedWhite={capturedWhite}
+                        capturedBlack={capturedBlack}
+                        handleMove={handleMove}
+                    />
                 </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
+                <div className="chat-container   ml-1 flex-1">
+                    <Chat 
+                    socket={socket}
+                    messages={messages}
+                    setMessages={setMessages} 
+                    />
+                </div>
+            </div>
+        );
+    }
 
-      {/* Captured Pieces Section */}
-      <div className="flex flex-col justify-start items-center w-1/4 p-4 bg-gradient-to-b from-gray-800 to-black rounded-lg shadow-lg border border-gray-600">
-        <div className="text-white text-xl mb-4 font-bold">Captured Pieces</div>
-        <div className="w-full">
-          <div className="text-white text-lg mb-2 font-semibold border-b border-gray-500 pb-2">
-            Your Captures:
-          </div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {player_color === "w"
-              ? capturedWhite.map((piece, index) => (
-                  <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces["w" + piece]}
-                  </div>
-                ))
-              : capturedBlack.map((piece, index) => (
-                  <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces["b" + piece]}
-                  </div>
-                ))}
-          </div>
-          <div className="text-white text-lg mb-2 font-semibold border-b border-gray-500 pb-2">
-            Opponent's Captures:
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {player_color === "w"
-              ? capturedBlack.map((piece, index) => (
-                  <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces["b" + piece]}
-                  </div>
-                ))
-              : capturedWhite.map((piece, index) => (
-                  <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces["w" + piece]}
-                  </div>
-                ))}
-          </div>
+    return (
+        <div className="mt-3 border-spacing-0  text-red-500 bg-black min-h-screen flex justify-center items-center">
+            <TopRightNav />
+            <div className="text-center">
+                {requestStatus ? (
+                    <div className="text-white">Waiting for opponent...</div>
+                ) : (
+                    <button
+                        onClick={() => {
+                            socket?.send(
+                                JSON.stringify({
+                                    type: INIT,
+                                    playerId,
+                                    token,
+
+                                })
+                            );
+                            setRequestStatus(true);
+                        }}
+                        disabled={requestStatus}
+                        className={`${
+                            requestStatus
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-blue-500 hover:bg-blue-700"
+                        } text-white py-2 px-4 rounded-md`}
+                    >
+                        Start Game
+                    </button>
+                )}
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
