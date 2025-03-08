@@ -4,7 +4,9 @@ import { Response, Request } from "express";
 import cookieParser from 'cookie-parser'; 
 import tokenAuth from "../token_components/tokenAuth";
 import fetchGames from "./express_server_components/fetchGames";
-
+import { WebSocketServer } from "ws";
+import { Game_Manager } from "../Game_Manger";
+import http from 'http';
 const cors = require('cors');
 const express = require('express');
 
@@ -12,6 +14,7 @@ export const app = express();
 // ✅ CORS Configuration
 const allowedOrigins = [
   "https://chess-abhimanyu2345s-projects.vercel.app", 
+  "http://localhost"
 ];
 
 const corsOptions = {
@@ -62,9 +65,27 @@ app.get('/api/games', (req: Request, res: Response) => {
   return res.status(401).send('Token not found');
 });
 
+const member = new Game_Manager();
+
+// Create an HTTP server from your Express app
+const server = http.createServer(app);
+
+// Attach a WebSocket server to the HTTP server
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws) => {
+  console.log('WebSocket connection established');
+  member.addUser(ws);
+  ws.on('close', () => {
+    member.removeUser(ws);
+  });
+});
+
+
 // ✅ Start Server
 export default function startExpress() {
-  app.listen(5000, '0.0.0.0', () => {
+  
+  server.listen(5000, '0.0.0.0', () => {
     console.log(`Server is listening on port 5000  AND fronted url: https://chess-abhimanyu2345s-projects.vercel.app/`);
     
   });
