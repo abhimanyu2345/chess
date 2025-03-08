@@ -15,9 +15,9 @@ export const app = express();
 
 
 const allowedOrigins = [
-  'http://192.168.1.9:5173', // Vite frontend
+  process.env.FRONTEND_URI, // Vite frontend
   'http://localhost:5173',    // Localhost frontend
-  'http://192.168.20.3:5173', // Another possible device
+   // Another possible device
 ];
 
 const corsOptions = {

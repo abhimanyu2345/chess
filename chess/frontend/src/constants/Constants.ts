@@ -1,5 +1,5 @@
 import { Chess, Color, PieceSymbol, Square } from "chess.js";
-export const host ='localhost';
+export const host ='54.254.162.138';
 export const INIT ="init_game";
 export const MOVE='move';
 export const COLOR='color';
