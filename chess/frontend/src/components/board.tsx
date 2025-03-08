@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { pieces } from './../assets/pieces.ts';
+import { pieces } from "./../assets/pieces.ts";
 import { ChessBoardProps } from "../constants/Constants.ts";
 import { Square } from "chess.js";
 
@@ -14,25 +14,18 @@ export default function ChessBoard({
   handleMove,
 }: ChessBoardProps) {
   const [from, SetFrom] = useState<Square | null>(null);
-  // Track the current turn as reported by the chess engine.
-  const [currentTurn, setCurrentTurn] = useState<string>(ChessBoard.turn());
-  const Notify = new Audio('./notify.mp3');
+  const Notify = new Audio("./notify.mp3");
 
-  // Update currentTurn whenever the board changes (a move was made)
+  // Optional logging to help debug the turn.
   useEffect(() => {
-    setCurrentTurn(ChessBoard.turn());
-  }, [board, ChessBoard]);
-
-  // Optionally, you can log to verify turns:
-  useEffect(() => {
-    console.log("Current turn:", currentTurn, "Player color:", player_color);
-  }, [currentTurn, player_color]);
+    console.log("Engine turn:", ChessBoard.turn(), "Player color:", player_color);
+  }, [board, player_color, ChessBoard]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!(e.target instanceof HTMLElement)) return;
     
-    // If it's not your turn, don't allow moves
-    if (currentTurn !== player_color) {
+    // Directly check the engine's turn (always up-to-date)
+    if (ChessBoard.turn() !== player_color) {
       alert("It's not your turn!");
       return;
     }
@@ -44,10 +37,11 @@ export default function ChessBoard({
       try {
         const moveResult = ChessBoard.move({ from, to: clickedSquare });
         if (moveResult) {
-          SetBoard(ChessBoard.board());
+          // Force a new board reference to trigger a re-render.
+          SetBoard(JSON.parse(JSON.stringify(ChessBoard.board())));
           MessageMove({ from: from, to: clickedSquare });
           handleMove(moveResult);
-          // The board change effect will update currentTurn.
+          console.log("Move made. New turn is:", ChessBoard.turn());
         }
       } catch (err) {
         console.error("Invalid move", err);
@@ -66,13 +60,13 @@ export default function ChessBoard({
       {/* Chessboard */}
       <div
         className={`z-10 bg-opacity-0 w-[50%] min-w-[12cm] flex flex-wrap ${
-          player_color === 'b' ? 'rotate-180' : ''
+          player_color === "b" ? "rotate-180" : ""
         }`}
       >
         {board.map((row, i) => (
-          <div key={i} className={`flex w-full ${player_color === 'b' ? 'rotate-180' : ''}`}>
+          <div key={i} className={`flex w-full ${player_color === "b" ? "rotate-180" : ""}`}>
             {row.map((element, j) => {
-              const squareId = String.fromCharCode(97 + j) + String(8 - i); // e.g., 'a1', 'b3', etc.
+              const squareId = String.fromCharCode(97 + j) + String(8 - i);
               const isSelected = squareId === from;
               return (
                 <div
@@ -80,8 +74,12 @@ export default function ChessBoard({
                   onClick={handleClick}
                   id={squareId}
                   className={`w-[calc(100%/8)] aspect-square opacity-90
-                    ${(i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-500'}
-                    ${isSelected ? "border-2 border-blue-500 bg-red-500 rounded-md shadow-[0_0_15px_rgba(59,130,246,0.75)] animate-pulse text-white" : ""}
+                    ${(i + j) % 2 === 0 ? "bg-white" : "bg-gray-500"}
+                    ${
+                      isSelected
+                        ? "border-2 border-blue-500 bg-red-500 rounded-md shadow-[0_0_15px_rgba(59,130,246,0.75)] animate-pulse text-white"
+                        : ""
+                    }
                   `}
                 >
                   {element !== null && (
@@ -100,37 +98,35 @@ export default function ChessBoard({
       <div className="flex flex-col justify-start items-center w-1/4 p-4 bg-gradient-to-b from-gray-800 to-black rounded-lg shadow-lg border border-gray-600">
         <div className="text-white text-xl mb-4 font-bold">Captured Pieces</div>
         <div className="w-full">
-          {/* Your Captured Pieces */}
           <div className="text-white text-lg mb-2 font-semibold border-b border-gray-500 pb-2">
             Your Captures:
           </div>
           <div className="flex flex-wrap gap-2 mb-4">
-            {player_color === 'w'
+            {player_color === "w"
               ? capturedWhite.map((piece, index) => (
                   <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces['w' + piece]}
+                    {pieces["w" + piece]}
                   </div>
                 ))
               : capturedBlack.map((piece, index) => (
                   <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces['b' + piece]}
+                    {pieces["b" + piece]}
                   </div>
                 ))}
           </div>
-          {/* Opponent's Captured Pieces */}
           <div className="text-white text-lg mb-2 font-semibold border-b border-gray-500 pb-2">
             Opponent's Captures:
           </div>
           <div className="flex flex-wrap gap-2">
-            {player_color === 'w'
+            {player_color === "w"
               ? capturedBlack.map((piece, index) => (
                   <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces['b' + piece]}
+                    {pieces["b" + piece]}
                   </div>
                 ))
               : capturedWhite.map((piece, index) => (
                   <div key={index} className="text-4xl bg-gray-700 rounded-full p-2 shadow-md">
-                    {pieces['w' + piece]}
+                    {pieces["w" + piece]}
                   </div>
                 ))}
           </div>
