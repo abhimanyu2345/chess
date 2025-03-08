@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { pieces } from './../assets/pieces.ts';
 import { ChessBoardProps } from "../constants/Constants.ts";
 import { Square } from "chess.js";
@@ -14,13 +14,19 @@ export default function ChessBoard({
   handleMove,
 }: ChessBoardProps) {
   const [from, SetFrom] = useState<Square | null>(null);
-  
-  // New state to track the current turn from the chess engine
+  // Track the current turn as reported by the chess engine.
   const [currentTurn, setCurrentTurn] = useState<string>(ChessBoard.turn());
   const Notify = new Audio('./notify.mp3');
 
-  // Update clickable status whenever currentTurn or player_color changes
-  
+  // Update currentTurn whenever the board changes (a move was made)
+  useEffect(() => {
+    setCurrentTurn(ChessBoard.turn());
+  }, [board, ChessBoard]);
+
+  // Optionally, you can log to verify turns:
+  useEffect(() => {
+    console.log("Current turn:", currentTurn, "Player color:", player_color);
+  }, [currentTurn, player_color]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!(e.target instanceof HTMLElement)) return;
@@ -41,8 +47,7 @@ export default function ChessBoard({
           SetBoard(ChessBoard.board());
           MessageMove({ from: from, to: clickedSquare });
           handleMove(moveResult);
-          // Update current turn after a successful move
-          setCurrentTurn(ChessBoard.turn());
+          // The board change effect will update currentTurn.
         }
       } catch (err) {
         console.error("Invalid move", err);
@@ -60,7 +65,9 @@ export default function ChessBoard({
     <div className="flex pl-3 z-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl rounded-l-none">
       {/* Chessboard */}
       <div
-        className={`z-10 bg-opacity-0 w-[50%] min-w-[12cm] flex flex-wrap ${player_color === 'b' ? 'rotate-180' : ''}`}
+        className={`z-10 bg-opacity-0 w-[50%] min-w-[12cm] flex flex-wrap ${
+          player_color === 'b' ? 'rotate-180' : ''
+        }`}
       >
         {board.map((row, i) => (
           <div key={i} className={`flex w-full ${player_color === 'b' ? 'rotate-180' : ''}`}>
