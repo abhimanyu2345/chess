@@ -14,7 +14,7 @@ export default function ChessBoard({
   handleMove,
 }: ChessBoardProps) {
   const [from, SetFrom] = useState<Square | null>(null);
-  const [clickState, SetClickState] = useState<string>("");
+  
   // New state to track the current turn from the chess engine
   const [currentTurn, setCurrentTurn] = useState<string>(ChessBoard.turn());
   const Notify = new Audio('./notify.mp3');
