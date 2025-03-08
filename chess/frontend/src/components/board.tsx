@@ -39,6 +39,7 @@ export default function ChessBoard({
           console.log(moveResult);
           console.log(player_color +"palyer colro");
           console.log(ChessBoard.turn());
+          console.log(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none')
           SetClickState(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none');
         }
       } catch (err) {
