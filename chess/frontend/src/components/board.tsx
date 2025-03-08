@@ -15,16 +15,24 @@ export default function ChessBoard({
 }: ChessBoardProps) {
   const [from, SetFrom] = useState<Square | null>(null);
   const [clickState, SetClickState] = useState<string>("");
+  // New state to track the current turn from the chess engine
+  const [currentTurn, setCurrentTurn] = useState<string>(ChessBoard.turn());
   const Notify = new Audio('./notify.mp3');
 
-  // Set the clickable status on initial render and whenever ChessBoard or player_color changes.
+  // Update clickable status whenever currentTurn or player_color changes
   useEffect(() => {
-    // When it's your turn, enable pointer events; otherwise, disable them.
-    SetClickState(ChessBoard.turn() === player_color ? 'pointer-events-auto' : 'pointer-events-none');
-  }, [ChessBoard, player_color]);
+    // When it's your turn, enable pointer events; otherwise, disable clicking
+    SetClickState(currentTurn === player_color ? 'pointer-events-auto' : 'pointer-events-none');
+  }, [currentTurn, player_color]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!(e.target instanceof HTMLElement)) return;
+    
+    // If it's not your turn, don't allow moves
+    if (currentTurn !== player_color) {
+      alert("It's not your turn!");
+      return;
+    }
 
     const clickedSquare = e.currentTarget.id as Square;
     if (from === null) {
@@ -36,8 +44,8 @@ export default function ChessBoard({
           SetBoard(ChessBoard.board());
           MessageMove({ from: from, to: clickedSquare });
           handleMove(moveResult);
-          // Update clickable status immediately after the move:
-          SetClickState(ChessBoard.turn() === player_color ? 'pointer-events-auto' : 'pointer-events-none');
+          // Update current turn after a successful move
+          setCurrentTurn(ChessBoard.turn());
         }
       } catch (err) {
         console.error("Invalid move", err);
@@ -49,17 +57,13 @@ export default function ChessBoard({
     if (ChessBoard.isGameOver()) {
       alert("Game Over");
     }
-    // Remove this alert if it's only for debugging.
-    alert(clickState);
   };
 
   return (
-    <div className="flex pl-3 z-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl rounded-l-none s">
+    <div className="flex pl-3 z-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl rounded-l-none">
       {/* Chessboard */}
       <div
-        className={`z-10 bg-opacity-0 w-[50%] min-w-[12cm] flex flex-wrap ${
-          player_color === 'b' ? 'rotate-180' : ''
-        }`}
+        className={`z-10 bg-opacity-0 w-[50%] min-w-[12cm] flex flex-wrap ${player_color === 'b' ? 'rotate-180' : ''}`}
       >
         {board.map((row, i) => (
           <div key={i} className={`flex w-full ${player_color === 'b' ? 'rotate-180' : ''}`}>
@@ -71,8 +75,8 @@ export default function ChessBoard({
                   key={squareId}
                   onClick={handleClick}
                   id={squareId}
-                  className={`${clickState} w-[calc(100%/8)] aspect-square opacity-9
-                    ${(i + j) % 2 === 0 ? 'bg-white' : 'bg-grey-500'}
+                  className={`${clickState} w-[calc(100%/8)] aspect-square opacity-90
+                    ${(i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-500'}
                     ${isSelected ? "border-2 border-blue-500 bg-red-500 rounded-md shadow-[0_0_15px_rgba(59,130,246,0.75)] animate-pulse text-white" : ""}
                   `}
                 >
