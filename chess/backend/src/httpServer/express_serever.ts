@@ -11,7 +11,7 @@ const express = require('express');
 export const app = express();
 // ✅ CORS Configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URI, 
+  "https://chess-b6msplsp4-abhimanyu2345s-projects.vercel.app", 
 ];
 
 const corsOptions = {
@@ -65,7 +65,7 @@ app.get('/api/games', (req: Request, res: Response) => {
 // ✅ Start Server
 export default function startExpress() {
   app.listen(5000, '0.0.0.0', () => {
-    console.log(`Server is listening on port 5000  AND fronted url: ${process.env.FRONTEND_URL}`);
+    console.log(`Server is listening on port 5000  AND fronted url: https://chess-b6msplsp4-abhimanyu2345s-projects.vercel.app/`);
     
   });
 }
