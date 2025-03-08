@@ -37,7 +37,7 @@ const Signup: React.FC = () => {
       if (response.data) {
         
         // Navigate to the dashboard
-        navigate('/home');
+        navigate('/');
       } 
       
     } catch (err: any) {
