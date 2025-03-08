@@ -20,10 +20,7 @@ export default function ChessBoard({
   const Notify = new Audio('./notify.mp3');
 
   // Update clickable status whenever currentTurn or player_color changes
-  useEffect(() => {
-    // When it's your turn, enable pointer events; otherwise, disable clicking
-    SetClickState(ChessBoard.turn()  == player_color ? 'pointer-events-auto' : 'pointer-events-none');
-  }, [ChessBoard.turn(), player_color]);
+  
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!(e.target instanceof HTMLElement)) return;
