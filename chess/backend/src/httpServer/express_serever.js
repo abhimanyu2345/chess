@@ -24,7 +24,7 @@ const express = require('express');
 exports.app = express();
 // ✅ CORS Configuration
 const allowedOrigins = [
-    "https://chess-b6msplsp4-abhimanyu2345s-projects.vercel.app",
+    "https://chess-abhimanyu2345s-projects.vercel.app",
 ];
 const corsOptions = {
     origin: allowedOrigins,
@@ -71,6 +71,6 @@ exports.app.get('/api/games', (req, res) => {
 // ✅ Start Server
 function startExpress() {
     exports.app.listen(5000, '0.0.0.0', () => {
-        console.log(`Server is listening on port 5000  AND fronted url: https://chess-b6msplsp4-abhimanyu2345s-projects.vercel.app/`);
+        console.log(`Server is listening on port 5000  AND fronted url: https://chess-abhimanyu2345s-projects.vercel.app/`);
     });
 }
