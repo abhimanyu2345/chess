@@ -12,7 +12,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(`http://${host}:5000/api/games`, {
+        const response = await axios.get(`https://${host}/api/games`, {
           withCredentials: true
         });
         alert(response.data);
