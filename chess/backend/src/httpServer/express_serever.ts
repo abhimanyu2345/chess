@@ -12,7 +12,7 @@ export const app = express();
 
 // ✅ CORS Configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URI || 'http://localhost:5173', 
+  process.env.FRONTEND_URI, 
 ];
 
 const corsOptions = {
