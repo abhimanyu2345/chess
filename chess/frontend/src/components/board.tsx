@@ -75,7 +75,7 @@ export default function ChessBoard({
                   key={squareId}
                   onClick={handleClick}
                   id={squareId}
-                  className={`${clickState} w-[calc(100%/8)] aspect-square opacity-90
+                  className={`w-[calc(100%/8)] aspect-square opacity-90
                     ${(i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-500'}
                     ${isSelected ? "border-2 border-blue-500 bg-red-500 rounded-md shadow-[0_0_15px_rgba(59,130,246,0.75)] animate-pulse text-white" : ""}
                   `}
