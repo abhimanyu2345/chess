@@ -13,7 +13,7 @@ const useAuth = (): authResult => {
       try {
         // Send request to backend to verify token
         const response = await axios.post(
-          `https://${host}:5000/verify-token`,
+          `https://${host}/verify-token`,
           {},
           { withCredentials: true }  // Ensure cookies are sent with the request
         );

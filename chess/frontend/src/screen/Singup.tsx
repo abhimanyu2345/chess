@@ -32,7 +32,7 @@ const Signup: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(`http://${host}:5000/signup`, { username, password, email }, { withCredentials: true });
+      const response = await axios.post(`http://${host}/signup`, { username, password, email }, { withCredentials: true });
       alert(response.data);
       if (response.data) {
         
