@@ -9,7 +9,6 @@ const cors = require('cors');
 const express = require('express');
 
 export const app = express();
-
 // ✅ CORS Configuration
 const allowedOrigins = [
   process.env.FRONTEND_URI, 
@@ -67,5 +66,6 @@ app.get('/api/games', (req: Request, res: Response) => {
 export default function startExpress() {
   app.listen(5000, '0.0.0.0', () => {
     console.log('Server is listening on port 5000');
+    console.log(`fronted url: ${process.env.FRONTEND_URL}`);
   });
 }
