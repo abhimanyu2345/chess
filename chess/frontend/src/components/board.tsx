@@ -19,11 +19,11 @@ export default function ChessBoard({
 
   // Set the clickable status on initial render and whenever ChessBoard or player_color changes.
   useEffect(() => {
-    SetClickState(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none');
+    // When it's your turn, enable pointer events; otherwise, disable them.
+    SetClickState(ChessBoard.turn() === player_color ? 'pointer-events-auto' : 'pointer-events-none');
   }, [ChessBoard, player_color]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none')
     if (!(e.target instanceof HTMLElement)) return;
 
     const clickedSquare = e.currentTarget.id as Square;
@@ -36,13 +36,8 @@ export default function ChessBoard({
           SetBoard(ChessBoard.board());
           MessageMove({ from: from, to: clickedSquare });
           handleMove(moveResult);
-          // Immediately update clickable status after a move.
-          console.log(moveResult);
-          console.log(player_color +"palyer colro");
-          console.log(ChessBoard.turn());
-          console.log(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none')
-          SetClickState(ChessBoard.turn() === player_color ? 'none' : 'pointer-events-none');
-          console.log("state afte set"+clickState)
+          // Update clickable status immediately after the move:
+          SetClickState(ChessBoard.turn() === player_color ? 'pointer-events-auto' : 'pointer-events-none');
         }
       } catch (err) {
         console.error("Invalid move", err);
@@ -54,7 +49,7 @@ export default function ChessBoard({
     if (ChessBoard.isGameOver()) {
       alert("Game Over");
     }
-    // You can remove this alert if it was only for debugging.
+    // Remove this alert if it's only for debugging.
     alert(clickState);
   };
 
