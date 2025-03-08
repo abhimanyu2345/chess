@@ -73,6 +73,7 @@ export class Game {
                         "playerId": playerId,
                         "move": move
                     }));
+                    
 
                 if (!this.board.isGameOver()) {
                     
