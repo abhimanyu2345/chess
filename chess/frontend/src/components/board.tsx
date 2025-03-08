@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { pieces } from './../assets/pieces.ts';
 import { ChessBoardProps } from "../constants/Constants.ts";
 import { Square } from "chess.js";
