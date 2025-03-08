@@ -65,7 +65,7 @@ app.get('/api/games', (req: Request, res: Response) => {
 // ✅ Start Server
 export default function startExpress() {
   app.listen(5000, '0.0.0.0', () => {
-    console.log(`Server is listening on port 5000 fronted url: ${process.env.FRONTEND_URL}`);
+    console.log(`Server is listening on port 5000  AND fronted url: ${process.env.FRONTEND_URL}`);
     
   });
 }
