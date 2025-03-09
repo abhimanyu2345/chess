@@ -11,21 +11,18 @@ const useAuth = (): authResult => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Send request to backend to verify token
         const response = await axios.post(
           `https://${host}/verify-token`,
           {},
-          { withCredentials: true }  // Ensure cookies are sent with the request
+          { withCredentials: true }
         );
-
+  
         if (response.status === 200) {
-          // If token is valid, set user data
-          const { Id, username, email ,token} = response.data;
-          localStorage.setItem('token',token) // Destructure response data
+          const { Id, username, email, token } = response.data;
+          localStorage.setItem('token', token);
           window.dispatchEvent(new Event('storage')); // Force UI update
           setAuthStatus('authenticated');
           setUser({ Id, username, email });
-           
         } else {
           setAuthStatus('unauthenticated');
         }
@@ -34,10 +31,10 @@ const useAuth = (): authResult => {
         setAuthStatus('unauthenticated');
       }
     };
-
+  
     checkAuth();
-  }, []); // Run once when the component mounts
-
+  }, []); 
+  
   return { authStatus, user, error };
 };
 
