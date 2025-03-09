@@ -22,6 +22,7 @@ const useAuth = (): authResult => {
           // If token is valid, set user data
           const { Id, username, email ,token} = response.data;
           localStorage.setItem('token',token) // Destructure response data
+          window.dispatchEvent(new Event('storage')); // Force UI update
           setAuthStatus('authenticated');
           setUser({ Id, username, email });
            
