@@ -14,7 +14,7 @@ export const app = express();
 // ✅ CORS Configuration
 const allowedOrigins = [
   "https://chess-abhimanyu2345s-projects.vercel.app", 
-  
+
 ];
 
 const corsOptions = {
@@ -45,6 +45,7 @@ app.post('/login', async (req: Request, res: Response) => {
 // ✅ Token Verification
 app.post('/verify-token', (req: Request, res: Response) => {
   const token = req.cookies.authToken;
+  console.log("token verification request received");
   if (token) {
     const response = tokenAuth(token);
     return res.status(response.response ? 200 : 400).json({ ...response.result, token });
