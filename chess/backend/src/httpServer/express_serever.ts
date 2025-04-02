@@ -66,6 +66,10 @@ app.get('/api/games', (req: Request, res: Response) => {
   return res.status(401).send('Token not found');
 });
 
+app.get('/',(req:Request,res:Response) => {
+  res.json('server is running');
+})
+
 const member = new Game_Manager();
 
 // Create an HTTP server from your Express app

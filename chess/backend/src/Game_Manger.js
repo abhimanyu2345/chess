@@ -71,6 +71,7 @@ class Game_Manager {
                         this.waiting_players = null;
                     }
                     else {
+                        this.waiting_players = null;
                         console.log('Request from the same player. Ignored.');
                     }
                     break;

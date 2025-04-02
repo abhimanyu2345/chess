@@ -28,7 +28,6 @@ exports.app = express();
 // ✅ CORS Configuration
 const allowedOrigins = [
     "https://chess-abhimanyu2345s-projects.vercel.app",
-    "http://localhost"
 ];
 const corsOptions = {
     origin: allowedOrigins,
@@ -54,6 +53,7 @@ exports.app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, funct
 // ✅ Token Verification
 exports.app.post('/verify-token', (req, res) => {
     const token = req.cookies.authToken;
+    console.log("token verification request received");
     if (token) {
         const response = (0, tokenAuth_1.default)(token);
         return res.status(response.response ? 200 : 400).json(Object.assign(Object.assign({}, response.result), { token }));
@@ -71,6 +71,9 @@ exports.app.get('/api/games', (req, res) => {
         return res.status(400).send('Invalid token');
     }
     return res.status(401).send('Token not found');
+});
+exports.app.get('/', (req, res) => {
+    res.json('server is running');
 });
 const member = new Game_Manger_1.Game_Manager();
 // Create an HTTP server from your Express app
